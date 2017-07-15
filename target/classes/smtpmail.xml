@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8088" doc:name="HTTP Listener Configuration"/>
+    <smtp:gmail-connector name="Gmail" validateConnections="true" doc:name="Gmail"/>
+    <flow name="smtpmailFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/smtp" allowedMethods="GET" doc:name="HTTP"/>
+        <set-variable variableName="msg" value="#['Hi i am fine. Got your msg and will definitely reach there on/before the occassion']" doc:name="Body"/>
+        <smtp:outbound-endpoint host="smtp.gmail.com" port="465" user="malay.satapathy@gmail.com" password="qwertypoiuy" connector-ref="Gmail" to="giet13ece021@gmail.com" from="malay.satapathy@gmail.com" subject="Accepting Invitation" replyTo="#[flowVars.msg]" responseTimeout="10000" doc:name="SMTP">
+            <property key="mail.smtp.starttls.enable" value="true"/>
+            <property key="mail.smtp.ssl.trust" value="enable"/>
+        </smtp:outbound-endpoint>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>
